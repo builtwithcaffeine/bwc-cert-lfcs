@@ -21,7 +21,17 @@ param vmUserName string
 @secure()
 param vmUserPassword string
 
-param resourceGroupName string = 'rg-linux-learning-${locationShortCode}'
+@description('The Resource Group Name')
+param resourceGroupName string = 'rg-learning-linux-${locationShortCode}'
+
+@description('The Network Security Group Name')
+param networkSecurityGroupName string = 'nsg-learning-linux-${locationShortCode}'
+
+@description('The Virtual Network Name')
+param virtualNetworkName string = 'vnet-learning-linux-${locationShortCode}'
+
+@description('The Subnet Name')
+param subnetName string = 'snet-learning-linux-${locationShortCode}'
 
 module createResourceGroup 'br/public:avm/res/resources/resource-group:0.4.0' = {
   name: 'createResourceGroup'
@@ -35,7 +45,7 @@ module createNetworkSecurityGroup 'br/public:avm/res/network/network-security-gr
   name: 'createNetworkSecurityGroup'
   scope: resourceGroup(resourceGroupName)
   params: {
-    name: 'nsg-linux-learning-${locationShortCode}'
+    name: networkSecurityGroupName
     location: location
     securityRules: [
       {
@@ -62,14 +72,14 @@ module createVirtualNetwork 'br/public:avm/res/network/virtual-network:0.5.1' = 
   name: 'create-virtual-network'
   scope: resourceGroup(resourceGroupName)
   params: {
-    name: 'vnet-linux-learning-${locationShortCode}'
+    name: virtualNetworkName
     location: location
     addressPrefixes: [
       '10.0.0.0/24'
     ]
     subnets: [
       {
-        name: 'snet-linux-learning-${locationShortCode}'
+        name: subnetName
         addressPrefix: '10.0.0.0/24'
         networkSecurityGroupResourceId: createNetworkSecurityGroup.outputs.resourceId
       }

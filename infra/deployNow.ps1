@@ -163,7 +163,7 @@ $publicIp = (Invoke-RestMethod -Uri 'https://ifconfig.me')
 $vmHostName = 'vm-ubuntu-01'
 $vmUserName = 'azurevmuser'
 $vmUserPassword = New-RandomPassword -length 16
-Write-Output "Generated Password: $vmUserPassword"
+
 # Check Azure Bicep Version
 Get-BicepVersion
 
@@ -196,7 +196,7 @@ if ($deploy) {
             publicIp=$publicIp `
             vmHostName=$vmHostName `
             vmUserName=$vmUserName `
-            vmUserPassword="'$($vmUserPassword)'" `
+            vmUserPassword=$vmUserPassword `
         --confirm-with-what-if `
         --output none
 }
@@ -205,4 +205,8 @@ if ($deploy) {
     $timeDifference = New-TimeSpan -Start $deployStartTime -End $deployEndTime ; $deploymentDuration = "{0:hh\:mm\:ss}" -f $timeDifference
     Write-Output "> Deployment [iac-bicep-$deployGuid] Started at $deployEndTime - Deployment Duration: $deploymentDuration"
     Write-Output `r "vmName: $vmHostName"
+    $vmHostIp = az vm list-ip-addresses --resource-group "rg-learning-linux-$shortcode" --name $vmHostName --query "[].virtualMachine.network.publicIpAddresses[0].ipAddress" --output tsv
+    Write-Output "vmName Public IP: $vmHostIp"
     Write-Output "Credentials: User: [$vmUserName] Password: [$vmUserPassword]"
+
+    Write-Output `r "ssh $vmUserName@$vmHostIp"
