@@ -153,7 +153,7 @@ $LocationShortcodeMap = @{
 
 $shortcode = $LocationShortcodeMap[$location]
 
-# Create Deploymnet Guid for Tracking in Azure
+# Create Deployment Guid for Tracking in Azure
 $deployGuid = (New-Guid).Guid
 
 # Get User Public IP Address
